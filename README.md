@@ -9,7 +9,7 @@ This repo builds on lambda calculus as an ADT (by Alessandro Cimatti) to treat t
 
 More accurately, they will be <b>Curried/Schonfinkeled</b> lambda terms, and with keyword LAM rather than LAMBDA:
 
-<code>(((lam x (lam x ((+ x) y))) 1) 2)</code>
+<code>(((lam x (lam y ((+ x) y))) 1) 2)</code>
 
 Once we have that, combinators are just macros sitting on top of LAMs (not lambdas)
 
