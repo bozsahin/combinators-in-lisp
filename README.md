@@ -1,5 +1,5 @@
 # combinators-in-lisp
-Combinators as Lisp macros on top of lambda calculus
+Combinators as Lisp macros on top of lambda calculus.
 
 Lambda calculus is not native language of Common Lisp. (it was for Lisp 1s):
 
