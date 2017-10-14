@@ -18,4 +18,6 @@ For combinator names, just prefix the Curry & Feys name with '&'.
 
 Keep in mind that <b>all combinators are Curried</b> in the current implementation.
 
+soon.
+
 -cem bozsahin
