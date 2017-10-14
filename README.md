@@ -16,4 +16,6 @@ Once we have that, combinators are just CL macros sitting on top of LAMs (not la
 
 For combinator names, just prefix the Curry & Feys name with '&'.
 
+Keep in mind that <b>all combinators are Curried</b> in the current implementation.
+
 -cem bozsahin
