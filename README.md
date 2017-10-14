@@ -7,7 +7,7 @@ Lambda calculus is not native language of Common Lisp. (it was for Lisp 1s):
 
 This repo builds on lambda calculus as an ADT (by Alessandro Cimatti) to treat things like above as lambda terms.
 
-More accurately, they will be <b>Curried</b> lambda terms, and with keyword LAM rather than LAMBDA:
+More accurately, they will be <b>Curried/Schonfinkeled</b> lambda terms, and with keyword LAM rather than LAMBDA:
 
 <code>(((lambda x (lambda x ((+ x) y))) 1) 2)</code>
 
