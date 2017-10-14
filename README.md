@@ -13,8 +13,8 @@ to see the difference.
 
 Once we have that, combinators are just macros sitting on top of LAMs (not lambdas)
 
-Lambda calculus ADT implementation is by Alessandro Cimatti.
+Lambda calculus ADT is by Alessandro Cimatti.
 
-Just prefix the Curry & Feys name with '&'.
+For combinators, just prefix the Curry & Feys name with '&'.
 
 -cem bozsahin
