@@ -3,10 +3,37 @@
 ;;;; -cem bozsahin
 ;;;; ====================================================
 
+
+;; some top level interface to lambda ADT
+
+(defmacro noe (term)
+  "normal order evaluation"
+  `(beta-normalize-outer ,term))
+
+
+(defmacro aoe (term)
+  "applicative order evaluation"
+  `(beta-normalize-inner ,term))
+
+(defmacro church-rosser (term)
+  "check the church rosser property"
+  `(beta-normalize ,term))
+
+(defun uncurry (l &optional (res 'identity))
+  "makes l left-branching  and binary"
+  (if (listp l) 
+    (case (length l)
+      (0 nil)
+      (1 (append (list res) (list (uncurry (first l)))))
+      (otherwise (uncurry (rest l)
+			  (append (list res) (list (uncurry (first l)))))))
+    l))
+
 ;; macros for combinators
-(defmacro &i ()
-  "identity--used only in some LFs empirically, i.e. by the grammarian"
-  `(mk-l (mk-v 'x) 'x))
+
+(defmacro &i (x)
+  "identity"
+  `(mk-v ,x))
 
 (defmacro  &a (f a)
   "application, which is not a combinator, contrary to common belief, but the primitive of combinators."
@@ -37,7 +64,7 @@
   `(mk-l (mk-v 'h)(mk-a ,f (mk-l (mk-v 'x)(mk-a ,g (mk-a 'h 'x))))))
 
 (defmacro &k (x y)
-  "K combinator"
+  "K combinator; cf &i"
   `(mk-v ,x))
 
 (defmacro &c (f g)
@@ -253,20 +280,3 @@
 	(format t "Inner: ~A~%" res-inner)
 	(format t "Outer: ~A~2%" res-outer)))))
 
-
-;;;; ========================
-;;;; some top level interface to lambda ADT
-;;;; ========================
-
-(defmacro noe (term)
-  "normal order evaluation"
-  `(beta-normalize-outer ,term))
-
-
-(defmacro aoe (term)
-  "applicative order evaluation"
-  `(beta-normalize-inner ,term))
-
-(defmacro church-rosser (term)
-  "check the church rosser property"
-  `(beta-normalize ,term))
