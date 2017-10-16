@@ -19,7 +19,7 @@
   `(beta-normalize ,term))
 
 (defun uncurry (l &optional (res '&i))
-  "makes l left-branching  and binary"
+  "makes l left-branching  and binary; &i is identity combinator"
   (if (listp l) 
     (case (length l)
       (0 nil)
@@ -281,8 +281,9 @@
 	(format t "Outer: ~A~2%" res-outer)))))
 
 ;; a shorthand for uncurrying a list recursively; use as #$(a b c) to get
-;;  (((identity a) b) c) 
-;; #$(a (b c) d) should give ((identity a ((identity b)c)) d)
+;;  (((&i a) b) c) 
+;; #$(a (b c) d) should give ((&i a ((&i b)c)) d)
+;; &i is the identity combinator.
 
 (defun |#$-reader| (s c1 c2)
   "NB. results of readers are program expressions, i.e. they are eval'd"
