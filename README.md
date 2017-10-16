@@ -25,10 +25,17 @@ you can use the reader macro #$(..) which binarizes them recursively for you. In
 
 You can write 
 
-<code> (noe (&s '(lam x (lam y #$(p x y))) '(lam y (q y)))) ==>
+<code>(noe (&s '(lam x (lam y #$(p x y))) '(lam y (q y)))) ==>
 (LAM X (((&I P) X) (Q X)))
 </code>
 
+It is particularly useful when you combine functions with many arguments:
+
+<code>(noe (&s '(lam x (lam y (lam z #$(p x y z)))) '(lam y (q y)))) ==>
+(LAM X (LAM Z ((((&I P) X) (Q X)) Z)))
+</code>
+
+Notice the extra <code>&i</code> (identity) combinator in the innermost term. 
 
 Keep in mind that <b>all combinators are Curried</b> in the current implementation.
 
