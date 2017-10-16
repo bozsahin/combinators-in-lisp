@@ -3,7 +3,6 @@
 ;;;; -cem bozsahin
 ;;;; ====================================================
 
-
 ;; some top level interface to lambda ADT
 
 (defmacro noe (term)
@@ -19,7 +18,7 @@
   "check the church rosser property"
   `(beta-normalize ,term))
 
-(defun uncurry (l &optional (res 'identity))
+(defun uncurry (l &optional (res '&i))
   "makes l left-branching  and binary"
   (if (listp l) 
     (case (length l)
@@ -65,6 +64,7 @@
 
 (defmacro &k (x y)
   "K combinator; cf &i"
+  (declare (ignore y))
   `(mk-v ,x))
 
 (defmacro &c (f g)
@@ -279,4 +279,15 @@
 	(format t "Results are NOT alpha-equivalent!")
 	(format t "Inner: ~A~%" res-inner)
 	(format t "Outer: ~A~2%" res-outer)))))
+
+;; a shorthand for uncurrying a list recursively; use as #$(a b c) to get
+;;  (((identity a) b) c) 
+;; #$(a (b c) d) should give ((identity a ((identity b)c)) d)
+
+(defun |#$-reader| (s c1 c2)
+  "NB. results of readers are program expressions, i.e. they are eval'd"
+  (declare (ignore c1 c2))
+  (let ((l (read s t nil t)))
+    (if (listp l) (uncurry l) l)))
+(set-dispatch-macro-character #\# #\$ #'|#$-reader|)
 
