@@ -16,6 +16,22 @@ Once we have that, combinators are just CL macros sitting on top of LAMs (not la
 
 For combinator names, just prefix the Curry & Feys name with '&'.
 
+Applicative lambda terms must be binary in the ADT. If you're tired of writing <code>(a b c)</code> as <code>((a b) c)</code>,
+you can use the reader macro #$(..) which binarizes them recursively for you. Instead of 
+
+<code>(noe (&s '(lam x (lam y ((p x) y))) '(lam y (q y)))) ==>
+
+(LAM X ((P X) (Q X)))
+</code>
+
+You can write 
+
+<code> (noe (&s '(lam x (lam y #$(p x y))) '(lam y (q y)))) ==>
+
+(LAM X (((&I P) X) (Q X)))
+</code>
+
+
 Keep in mind that <b>all combinators are Curried</b> in the current implementation.
 
 soon.
