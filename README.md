@@ -35,6 +35,4 @@ Notice the extra <code>&i</code> (identity) combinator in the innermost term.
 
 Keep in mind that <b>all combinators are Curried</b> in the current implementation.
 
-soon.
-
 -cem bozsahin
