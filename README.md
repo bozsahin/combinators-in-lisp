@@ -14,7 +14,7 @@ More accurately, they will be <b>Curried/Schonfinkeled</b> lambda terms (hence n
 
 Once we have that, combinators are just CL macros sitting on top of LAMs (not lambdas)
 
-For combinator names, just prefix the Curry & Feys name with '&'.
+<b>For combinator names, just prefix the Curry & Feys name with '&'.</b>
 
 Applicative lambda terms must be binary in the ADT. If you're tired of writing <code>(a b c)</code> as <code>((a b) c)</code>, you can use the reader macro #$(..) which binarizes them recursively for you. Instead of 
 
