@@ -20,14 +20,12 @@ Applicative lambda terms must be binary in the ADT. If you're tired of writing <
 you can use the reader macro #$(..) which binarizes them recursively for you. Instead of 
 
 <code>(noe (&s '(lam x (lam y ((p x) y))) '(lam y (q y)))) ==>
-
 (LAM X ((P X) (Q X)))
 </code>
 
 You can write 
 
 <code> (noe (&s '(lam x (lam y #$(p x y))) '(lam y (q y)))) ==>
-
 (LAM X (((&I P) X) (Q X)))
 </code>
 
