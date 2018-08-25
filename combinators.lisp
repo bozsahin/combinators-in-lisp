@@ -18,79 +18,6 @@
   "check the church rosser property"
   `(beta-normalize ,term))
 
-(defun uncurry (l &optional (res '&i))
-  "makes l left-branching  and binary; &i is identity combinator"
-  (if (listp l) 
-    (case (length l)
-      (0 nil)
-      (1 (append (list res) (list (uncurry (first l)))))
-      (otherwise (uncurry (rest l)
-			  (append (list res) (list (uncurry (first l)))))))
-    l))
-
-;; macros for combinators
-
-(defmacro &i (x)
-  "identity"
-  `(mk-v ,x))
-
-(defmacro  &a (f a)
-  "application, which is not a combinator, contrary to common belief, but the primitive of combinators."
-  `(mk-a ,f ,a))
-
-(defmacro &b (f g)
-  "B combinator"
-  `(mk-l (mk-v 'x)(mk-a ,f (mk-a ,g 'x))))
-
-(defmacro &b2 (f g)
-  "B^2 combinator"
-  `(mk-l (mk-v 'x)(mk-l (mk-v 'y)(mk-a ,f (mk-a (mk-a ,g 'x)'y)))))
-
-(defmacro &b3 (f g)
-  "B^3 combinator"
-  `(mk-l (mk-v 'x)(mk-l (mk-v 'y)(mk-l (mk-v 'z)(mk-a ,f (mk-a (mk-a (mk-a ,g 'x)'y)'z))))))
-
-(defmacro &s (f g)
-  "S combinator"
-  `(mk-l (mk-v 'x)(mk-a (mk-a ,f 'x) (mk-a ,g 'x))))
-
-(defmacro &s2 (f g)
-  "S^2 combinator. This is actually S'' not Curry's S^2. See Bozsahin 2012"
-  `(mk-l (mk-v 'x)(mk-l (mk-v 'y)(mk-a (mk-a ,f 'x) (mk-a (mk-a ,g 'x)'y)))))
-
-(defmacro &o (f g)
-  "O combinator, also called D by Hoyt & Baldridge 2008. See Bozsahin 2015 book for discussion."
-  `(mk-l (mk-v 'h)(mk-a ,f (mk-l (mk-v 'x)(mk-a ,g (mk-a 'h 'x))))))
-
-(defmacro &k (x y)
-  "K combinator; cf &i"
-  (declare (ignore y))
-  `(mk-v ,x))
-
-(defmacro &c (f g)
-  "C combinator"
-  `(mk-l (mk-v 'x)(mk-a (mk-a ,f 'x) ,g)))
-
-(defmacro &w (f x)
-  "W combinator"
-  `(mk-a (mk-a ,f ,x) ,x))
-
-(defmacro &phi (f g)
-  "Phi combinator"
-  `(mk-l (mk-v 'h)(mk-l (mk-v 'x)(mk-a (mk-a ,f (mk-a ,g 'x)) (mk-a 'h 'x)))))
-
-(defmacro &psi (f g)
-  "Psi combinator"
-  `(mk-l (mk-v 'z)(mk-l (mk-v 'w)(mk-a (mk-a ,f (mk-a ,g 'z))(mk-a ,g 'w)))))
-
-(defmacro &t (f a)
-  "T combinator"
-  `(mk-a ,a ,f))
-
-(defmacro &j (x y)
-  "Rosser's J combinator"
-  `(mk-l (mk-v 'z)(mk-l (mk-v 'w)(mk-a (mk-a ,x ,y)(mk-a (mk-a ,x 'w) 'z)))))
-
 ;;;; ==============================================
 ;;;; The lambda layer
 ;;;; ==============================================
@@ -280,15 +207,67 @@
 	(format t "Inner: ~A~%" res-inner)
 	(format t "Outer: ~A~2%" res-outer)))))
 
-;; a shorthand for uncurrying a list recursively; use as #$(a b c) to get
-;;  (((&i a) b) c) 
-;; #$(a (b c) d) should give ((&i a ((&i b)c)) d)
-;; &i is the identity combinator.
+(defun mk-list (obj)
+  "make a list if it isn't"
+  (if (listp obj) obj (list obj)))
+
+(defun curry2 (l &optional (res '#&i))
+  "makes l left-branching  and binary; &i is identity combinator
+  The trick is &i makes singleton lists binary lambda terms."
+  (if (listp l)
+    (case (length l)
+      (0 nil)
+      (1 (append (list res) (list (curry2 (first l)))))
+      (otherwise (curry2 (rest l)
+			  (append (list res) (list (curry2 (first l)))))))
+    l))
+
+;; a shorthand for curry2ing a list recursively; use as #$(a b c) to get
+;;  ((a b) c) 
 
 (defun |#$-reader| (s c1 c2)
   "NB. results of readers are program expressions, i.e. they are eval'd"
   (declare (ignore c1 c2))
-  (let ((l (read s t nil t)))
-    (if (listp l) (uncurry l) l)))
+  (noe (curry2 (read s t nil t))))
+
 (set-dispatch-macro-character #\# #\$ #'|#$-reader|)
+
+;; reader macro for combinators. Note that
+;; it cannot be a defmacro because they can appear
+;; anywhere, not just in functor position.
+
+(defun |#&-reader| (s c1 c2)
+  "NB. results of readers are program expressions, i.e. they are eval'd"
+  (declare (ignore c1 c2))
+  (let ((comb (read s t nil t)))
+    (case comb  ; names are from Curry & Feys unless noted otherwise
+      (i   (mk-l (mk-v 'x) 'x))
+      (a   (mk-l (mk-v 'f)(mk-l (mk-v 'a) (mk-a 'f 'a))))
+      (b   (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x)(mk-a 'f (mk-a 'g 'x))))))
+      (b2  (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x) (mk-l (mk-v 'y)
+		(mk-a 'f (mk-a (mk-a 'g 'x) 'y)))))))
+      (b3  (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x) (mk-l (mk-v 'y)(mk-l (mk-v 'z)
+		(mk-a 'f (mk-a (mk-a (mk-a 'g 'x) 'y)'z))))))))
+      (s  (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'x)
+		(mk-a (mk-a 'f 'x) (mk-a 'g 'x))))))
+         ; S^2 combinator. This is actually Turner's S'' not Curry's S^2. See Bozsahin 2012"
+      (s2  (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'x)(mk-l (mk-v 'y)
+		(mk-a (mk-a 'f 'x) (mk-a (mk-a 'g 'x)'y)))))))
+         ; O combinator, also called D by Hoyt & Baldridge 2008. See Bozsahin 2012 book for discussion."
+      (o   (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'h)
+	        (mk-a 'f (mk-l (mk-v 'x)(mk-a 'g (mk-a 'h 'x))))))))
+      (k   (mk-l (mk-v 'x)(mk-l (mk-v 'y)(mk-a 'x 'x))))
+      (c   (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'g)))))
+      (w   (mk-l (mk-v 'f)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'x))))
+      (phi (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'h)(mk-l (mk-v 'x)
+	        (mk-a (mk-a 'f (mk-a 'g 'x)) (mk-a 'h 'x)))))))
+      (psi (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'z)(mk-l (mk-v 'w)
+                (mk-a (mk-a 'f (mk-a 'g 'z))(mk-a 'g 'w)))))))
+      ('t  (mk-l (mk-v 'f)(mk-l (mk-v 'x)(mk-a 'x 'f))))
+           ; Rosser's J combinator
+      (j   (mk-l (mk-v 'x)(mk-l (mk-v 'y)(mk-l (mk-v 'z)(mk-l (mk-v 'w)
+	       (mk-a (mk-a 'x 'y)(mk-a (mk-a 'x 'w) 'z)))))))
+      (otherwise '(unknown combinator)))))
+
+(set-dispatch-macro-character #\# #\& #'|#&-reader|)
 
