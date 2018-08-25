@@ -1,6 +1,8 @@
 # combinators-in-lisp
 Combinators as Lisp macros on top of lambda calculus.
 
+(The macro part is under construction. Pls read it as things to do list for the moment).
+
 Lambda calculus is not native language of Common Lisp. (it was for Lisp 1s):
 
 <code>(((lambda (x) (lambda (y) (+ x y))) 1) 2)</code> is not well-formed in CL.
