@@ -18,12 +18,12 @@ Once we have that, combinators are just CL macros sitting on top of LAMs (not la
 
 Applicative lambda terms must be binary in the ADT. If you're tired of writing <code>(a b c)</code> as <code>((a b) c)</code>, you can use the reader macro #$(..) which binarizes them recursively for you. Instead of 
 
-<code>(noe '((#&s (lam x (lam y ((p x) y)))) (lam y (q y))) ==>
+<code>(noe '((#&s (lam x (lam y ((p x) y)))) (lam y (q y)))) ==>
 (LAM X ((P X) (Q X)))</code>
 
 You can write 
 
-<code>(noe '((#&s (lam x (lam y #$(p x y)))) (lam y (q y))) ==>
+<code>(noe '((#&s (lam x (lam y #$(p x y)))) (lam y (q y)))) ==>
 (LAM X ((P X) (Q X)))</code>
 
 It is particularly useful when you combine functions with many arguments:
