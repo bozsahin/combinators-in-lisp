@@ -1,8 +1,6 @@
 # combinators-in-lisp
 Combinators as Lisp macros on top of lambda calculus.
 
-(The macro part is under construction. Pls read it as things to do list for the moment).
-
 Lambda calculus is not native language of Common Lisp. (it was for Lisp 1s):
 
 <code>(((lambda (x) (lambda (y) (+ x y))) 1) 2)</code> is not well-formed in CL.
@@ -16,28 +14,28 @@ More accurately, they will be <b>Curried/Schonfinkeled</b> lambda terms (hence n
 
 Once we have that, combinators are just CL macros sitting on top of LAMs (not lambdas)
 
-<b>For combinator names, just prefix the Curry & Feys name with '&'.</b>
+<b>For combinator names, just prefix the Curry & Feys name with '#&'.</b>
 
 Applicative lambda terms must be binary in the ADT. If you're tired of writing <code>(a b c)</code> as <code>((a b) c)</code>, you can use the reader macro #$(..) which binarizes them recursively for you. Instead of 
 
-<code>(noe (&s '(lam x (lam y ((p x) y))) '(lam y (q y)))) ==>
+<code>(noe '((#&s (lam x (lam y ((p x) y)))) (lam y (q y))) ==>
 (LAM X ((P X) (Q X)))</code>
 
 You can write 
 
-<code>(noe (&s '(lam x (lam y #$(p x y))) '(lam y (q y)))) ==>
-(LAM X (((&I P) X) (Q X)))</code>
+<code>(noe '((#&s (lam x (lam y #$(p x y)))) (lam y (q y))) ==>
+(LAM X ((P X) (Q X)))</code>
 
 It is particularly useful when you combine functions with many arguments:
 
-<code>(noe (&s '(lam x (lam y (lam z #$(p x y z)))) '(lam y (q y)))) ==>
-(LAM X (LAM Z ((((&I P) X) (Q X)) Z)))</code>
+<code>(noe '((#&s (lam x (lam y (lam z #$(p x y z))))) (lam y (q y)))) ==>
+(LAM X (LAM Z (((P X) (Q X)) Z)))</code>
 
 Here is an example with B-cube using bunch of #$(..) in it; as long as their result is not eval'd they are fine:
 
-<code>(aoe (&b3 '(lam x (lam y #$(p x y))) '(lam y (lam z (lam z2 #$(q y z z2)))))) ==>
+<code>(aoe '((#&b3 (lam x (lam y #$(p x y)))) (lam y (lam z (lam z2 #$(q y z z2)))))) ==>
 
-(LAM X (LAM Y (LAM Z (LAM #:G471 (((&I P) ((((&I Q) X) Y) Z)) #:G471)))))
+(LAM X (LAM Y (LAM Z (LAM #:G471 ((P ((( Q X) Y) Z)) #:G471)))))
 </code>
 
 Here, <code>noe</code> and <code>aoe</code> are normal order and applicative order evaluators.
