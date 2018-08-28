@@ -211,26 +211,6 @@
   "make a list if it isn't"
   (if (listp obj) obj (list obj)))
 
-(defun curry2 (l &optional (res '#&i))
-  "makes l left-branching  and binary; &i is identity combinator
-  The trick is &i makes singleton lists binary lambda terms."
-  (if (listp l)
-    (case (length l)
-      (0 nil)
-      (1 (append (list res) (list (curry2 (first l)))))
-      (otherwise (curry2 (rest l)
-			  (append (list res) (list (curry2 (first l)))))))
-    l))
-
-;; a shorthand for curry2ing a list recursively; use as #$(a b c) to get
-;;  ((a b) c) 
-
-(defun |#$-reader| (s c1 c2)
-  "NB. results of readers are program expressions, i.e. they are eval'd"
-  (declare (ignore c1 c2))
-  (noe (curry2 (read s t nil t))))
-
-(set-dispatch-macro-character #\# #\$ #'|#$-reader|)
 
 ;; reader macro for combinators. Note that
 ;; it cannot be a defmacro because they can appear
@@ -256,7 +236,7 @@
          ; O combinator, also called D by Hoyt & Baldridge 2008. See Bozsahin 2012 book for discussion."
       (o   (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'h)
 	        (mk-a 'f (mk-l (mk-v 'x)(mk-a 'g (mk-a 'h 'x))))))))
-      (k   (mk-l (mk-v 'x)(mk-l (mk-v 'y)(mk-a 'x 'x))))
+      (k   (mk-l (mk-v 'x)(mk-l (mk-v 'y) 'x )))
       (c   (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'g)))))
       (w   (mk-l (mk-v 'f)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'x))))
       (phi (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'h)(mk-l (mk-v 'x)
@@ -270,4 +250,25 @@
       (otherwise '(unknown combinator)))))
 
 (set-dispatch-macro-character #\# #\& #'|#&-reader|)
+
+(defun curry2 (l &optional (res '#&i))
+  "makes l left-branching  and binary; &i is identity combinator
+  The trick is &i makes singleton lists binary lambda terms."
+  (if (listp l)
+    (case (length l)
+      (0 nil)
+      (1 (append (list res) (list (curry2 (first l)))))
+      (otherwise (curry2 (rest l)
+			  (append (list res) (list (curry2 (first l)))))))
+    l))
+
+;; a shorthand for curry2ing a list recursively; use as #$(a b c) to get
+;;  ((a b) c) 
+
+(defun |#$-reader| (s c1 c2)
+  "NB. results of readers are program expressions, i.e. they are eval'd"
+  (declare (ignore c1 c2))
+  (noe (curry2 (read s t nil t))))
+
+(set-dispatch-macro-character #\# #\$ #'|#$-reader|)
 
