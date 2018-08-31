@@ -33,6 +33,8 @@
 ;;;; l :: = ( lam v e )
 
 (defun mk-v (sym) sym)
+(defun mk-e (sym) sym)
+(defun mk-v (sym) sym)
 (defun is-v (e) (cond ((consp e) nil)
 		      ((symbolp e) t) 
 		      ((constantp e) t)
@@ -221,7 +223,7 @@
   (declare (ignore c1 c2))
   (let ((comb (read s t nil t)))
     (case comb  ; names are from Curry & Feys unless noted otherwise
-      (i   (mk-l (mk-v 'x) 'x))
+      (i   (mk-l (mk-v 'x) (mk-e 'x)))
       (a   (mk-l (mk-v 'f)(mk-l (mk-v 'a) (mk-a 'f 'a))))
       (b   (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x)(mk-a 'f (mk-a 'g 'x))))))
       (b2  (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x) (mk-l (mk-v 'y)
@@ -236,7 +238,7 @@
          ; O combinator, also called D by Hoyt & Baldridge 2008. See Bozsahin 2012 book for discussion."
       (o   (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'h)
 	        (mk-a 'f (mk-l (mk-v 'x)(mk-a 'g (mk-a 'h 'x))))))))
-      (k   (mk-l (mk-v 'x)(mk-l (mk-v 'y) 'x )))
+      (k   (mk-l (mk-v 'x)(mk-l (mk-v 'y) (mk-e 'x))))
       (c   (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'g)))))
       (w   (mk-l (mk-v 'f)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'x))))
       (phi (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'h)(mk-l (mk-v 'x)
