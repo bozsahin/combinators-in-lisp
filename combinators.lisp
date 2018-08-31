@@ -264,6 +264,14 @@
 			  (append (list res) (list (curry2 (first l)))))))
     l))
 
+(defun left-assoc (l &optional (res nil))
+  "makes l a left-associative binary structure"
+  (if (and (listp l) (not (null l)))
+    (if (listp (first l))
+      (left-assoc (rest l) (append res (left-assoc (first l))))
+      (left-assoc (rest l) (append res (list (first l)))))
+    (append res (list l))))
+
 ;; a shorthand for curry2ing a list recursively; use as #$(a b c) to get
 ;;  ((a b) c) 
 
