@@ -253,32 +253,26 @@
 
 (set-dispatch-macro-character #\# #\& #'|#&-reader|)
 
-(defun curry2 (l &optional (res '#&i))
-  "makes l left-branching  and binary; &i is identity combinator
-  The trick is &i makes singleton lists binary lambda terms."
-  (if (listp l)
-    (case (length l)
-      (0 nil)
-      (1 (append (list res) (list (curry2 (first l)))))
-      (otherwise (curry2 (rest l)
-			  (append (list res) (list (curry2 (first l)))))))
-    l))
+(defun my-cons (l1 l2)
+  (if (null l1) l2 (cons l1 l2)))
 
 (defun left-assoc (l &optional (res nil))
-  "makes l a left-associative binary structure"
+  "makes l a left-associative binary structure. Dont translate LAM terms"
   (if (and (listp l) (not (null l)))
     (if (listp (first l))
-      (left-assoc (rest l) (append res (left-assoc (first l))))
-      (left-assoc (rest l) (append res (list (first l)))))
-    (append res (list l))))
+      (left-assoc (rest l) (my-cons res (list (if (is-l (first l)) (first l) 
+					     (left-assoc (first l))))))
+      (left-assoc (rest l) (if res (cons res (list (first l)))
+			     (first l))))
+    (if (null l) res (cons res (list l)))))
 
-;; a shorthand for curry2ing a list recursively; use as #$(a b c) to get
+;; a shorthand for de-currying a list recursively; use as #$(a b c) to get
 ;;  ((a b) c) 
 
 (defun |#$-reader| (s c1 c2)
   "NB. results of readers are program expressions, i.e. they are eval'd"
   (declare (ignore c1 c2))
-  (noe (curry2 (read s t nil t))))
+  (noe (left-assoc (read s t nil t))))
 
 (set-dispatch-macro-character #\# #\$ #'|#$-reader|)
 
