@@ -223,6 +223,9 @@
   (declare (ignore c1 c2))
   (let ((comb (read s t nil t)))
     (case comb  ; names are from Curry & Feys unless noted otherwise
+                ; these are simply lambda equivalent terms for combinators
+		; don't be  alarmed by constants as var names; alpha conversion
+		; takes care of it.
       (i   (mk-l (mk-v 'x) (mk-e 'x)))
       (a   (mk-l (mk-v 'f)(mk-l (mk-v 'a) (mk-a 'f 'a))))
       (b   (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x)(mk-a 'f (mk-a 'g 'x))))))
@@ -260,9 +263,11 @@
   "makes l a left-associative binary structure. Dont translate LAM terms"
   (if (and (listp l) (not (null l)))
     (if (listp (first l))
-      (left-assoc (rest l) (my-cons res (list (if (is-l (first l)) (first l) 
-					     (left-assoc (first l))))))
-      (left-assoc (rest l) (if res (cons res (list (first l)))
+      (left-assoc (rest l) (my-cons res (if (is-l (first l)) 
+					  (first l) 
+					  (list (left-assoc (first l))))))
+      (left-assoc (rest l) (if res 
+			     (cons res (list (first l)))
 			     (first l))))
     (if (null l) res (cons res (list l)))))
 
