@@ -153,9 +153,17 @@
      (beta-reduce-outer (beta-reduce e) (- lim 1)))
     ((is-v e) e)
     ((is-a e)
-     (mk-a
-       (beta-reduce-outer (a-get-f e))
-       (beta-reduce-outer (a-get-a e))))
+     ; CB: ((lam x x)a) is taken to be same as (((lam x x)) a) and ((((lam x x))) a)
+     ; to take care of internal currying
+     (if (and (consp (a-get-f e)) (not (is-a (a-get-f e))))
+       (if (and (consp (a-get-f (a-get-f e))) (is-rdx (a-get-f (a-get-f e))))
+	 (mk-a (beta-reduce-outer (a-get-f (a-get-f e)))
+	       (beta-reduce-outer (a-get-a e)))
+	 (beta-reduce-outer (mk-a (a-get-f (a-get-f e))
+				  (beta-reduce-outer (a-get-a e)))))
+       (mk-a 
+	 (beta-reduce-outer (a-get-f e))
+	 (beta-reduce-outer (a-get-a e)))))
     ((is-l e)
      (mk-l
        (l-get-v e)
@@ -235,10 +243,10 @@
 		(mk-a 'f (mk-a (mk-a (mk-a 'g 'x) 'y)'z))))))))
       (s  (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'x)
 		(mk-a (mk-a 'f 'x) (mk-a 'g 'x))))))
-         ; S^2 combinator. This is actually Turner's S'' not Curry's S^2. See Bozsahin 2012"
+         ; S^2 combinator. This is actually Turner's S'' not Curry's S^2. See Bozsahin 2012
       (s2  (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'x)(mk-l (mk-v 'y)
 		(mk-a (mk-a 'f 'x) (mk-a (mk-a 'g 'x)'y)))))))
-         ; O combinator, also called D by Hoyt & Baldridge 2008. See Bozsahin 2012 book for discussion."
+         ; O combinator, also called D by Hoyt & Baldridge 2008. See Bozsahin 2012 book for discussion.
       (o   (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'h)
 	        (mk-a 'f (mk-l (mk-v 'x)(mk-a 'g (mk-a 'h 'x))))))))
       (k   (mk-l (mk-v 'x)(mk-l (mk-v 'y) (mk-e 'x))))
