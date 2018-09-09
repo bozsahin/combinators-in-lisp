@@ -26,6 +26,8 @@ You can write
 <code>(noe '((#&s (lam x (lam y #$(p x y)))) (lam y (q y)))) ==>
 (LAM X ((P X) (Q X)))</code>
 
+<code>noe</code> is the normal order evaluator. 
+
 It is particularly useful when you combine functions with many arguments:
 
 <code>(noe '((#&s (lam x (lam y (lam z #$(p x y z))))) (lam y (q y)))) ==>
@@ -36,13 +38,11 @@ There are examples of Church and Scott encodings in the repo to show more comple
 For example, Scott encoding of <code>(or true false)</code> is:
 
 <code> or = ((S S) (K (K K)))
-  
- true = K
+  true = K
+  false = K(S K K)</code>
  
- false = K(S K K)</code>
- 
- so that <code>(or true false) ==> (lam x (lam y x))</code> which is <code>K</code> (true).
+ so that <code>(or true false) ==> (lam x (lam y x))</code> which is <code>K</code>=true.
 
-<code>noe</code> is the normal order evaluator. 
+
 
 -cem bozsahin
