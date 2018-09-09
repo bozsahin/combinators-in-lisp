@@ -47,4 +47,12 @@ so that <code>(or true false) ==> (lam x (lam y x))</code>, which is <code>K</co
 
 and <code>(or false false) ==> (lam y (lam x x))</code>, which is <code>K(S K K)</code>=false.
 
+Left-associativity is taken care of on the fly. All of the examples below are same lambda terms:
+
+<code> ((lam x x) a)</code>
+
+<code> (((lam x x)) a)</code>
+
+<code> ((((lam x x))) a)</code>
+
 -cem bozsahin
