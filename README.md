@@ -40,9 +40,4 @@ Here is an example with B-cube using bunch of #$(..) in it; as long as their res
 
 Here, <code>noe</code> and <code>aoe</code> are normal order and applicative order evaluators.
 
-Notice the extra <code>#&i</code> (identity) combinator in the innermost term. It is introduced by
-the <code>curry2</code> function as a reminder that the innermost object is necessarily a function.
-
-Keep in mind that <b>all combinators are Curried</b> in the current implementation.
-
 -cem bozsahin
