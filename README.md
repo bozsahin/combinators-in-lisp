@@ -31,13 +31,8 @@ It is particularly useful when you combine functions with many arguments:
 <code>(noe '((#&s (lam x (lam y (lam z #$(p x y z))))) (lam y (q y)))) ==>
 (LAM X (LAM Z (((P X) (Q X)) Z)))</code>
 
-Here is an example with B-cube using bunch of #$(..) in it; as long as their result is not eval'd they are fine:
+There are examples of Church and Scott encodings in the repo to show more complex cases.
 
-<code>(aoe '((#&b3 (lam x (lam y #$(p x y)))) (lam y (lam z (lam z2 #$(q y z z2)))))) ==>
-
-(LAM X (LAM Y (LAM Z (LAM #:G471 ((P ((( Q X) Y) Z)) #:G471)))))
-</code>
-
-Here, <code>noe</code> and <code>aoe</code> are normal order and applicative order evaluators.
+<code>noe</code> is the normal order evaluator. 
 
 -cem bozsahin
