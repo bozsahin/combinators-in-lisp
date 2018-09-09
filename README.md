@@ -37,13 +37,13 @@ There are examples of Church and Scott encodings in the repo to show more comple
 
 For example, Scott encoding of <code>or, true, false</code> are:
 
-<code> or = ((S S) (K (K K)))
+<code>or = ((S S) (K (K K)))</code>
   
-  true = K
+<code>true = K</code>
   
-  false = K(S K K)</code>
+<code>false = K(S K K)</code>
  
- so that <code>(or true false) ==> (lam x (lam y x))</code> which is <code>K</code>=true.
+so that <code>(or true false) ==> (lam x (lam y x))</code>, which is <code>K</code>=true.
 
 
 
