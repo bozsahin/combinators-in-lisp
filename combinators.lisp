@@ -34,7 +34,6 @@
 
 (defun mk-v (sym) sym)
 (defun mk-e (sym) sym)
-(defun mk-v (sym) sym)
 (defun is-v (e) (cond ((consp e) nil)
 		      ((symbolp e) t) 
 		      ((constantp e) t)
@@ -272,7 +271,7 @@
   (if (and (listp l) (not (null l)))
     (if (listp (first l))
       (left-assoc (rest l) (my-cons res (if (is-l (first l)) 
-					  (first l) 
+					  (list (first l))
 					  (list (left-assoc (first l))))))
       (left-assoc (rest l) (if res 
 			     (cons res (list (first l)))
