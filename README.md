@@ -35,10 +35,12 @@ It is particularly useful when you combine functions with many arguments:
 
 There are examples of Church and Scott encodings in the repo to show more complex cases.
 
-For example, Scott encoding of <code>(or true false)</code> is:
+For example, Scott encoding of <code>or, true, false</code> are:
 
 <code> or = ((S S) (K (K K)))
+  
   true = K
+  
   false = K(S K K)</code>
  
  so that <code>(or true false) ==> (lam x (lam y x))</code> which is <code>K</code>=true.
