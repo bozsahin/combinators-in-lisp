@@ -45,6 +45,6 @@ For example, Scott encoding of <code>or, true, false</code> are:
  
 so that <code>(or true false) ==> (lam x (lam y x))</code>, which is <code>K</code>=true.
 
-
+and <code>(or false false) ==> (lam y (lam x x))</code>, which is <code>K(S K K)</code>=false.
 
 -cem bozsahin
