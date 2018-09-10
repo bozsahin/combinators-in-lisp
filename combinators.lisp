@@ -255,6 +255,8 @@
 	        (mk-a (mk-a 'f (mk-a 'g 'x)) (mk-a 'h 'x)))))))
       (psi (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'z)(mk-l (mk-v 'w)
                 (mk-a (mk-a 'f (mk-a 'g 'z))(mk-a 'g 'w)))))))
+      (y   (mk-l (mk-v 'h) (mk-a (mk-l (mk-v 'x) (mk-a 'h (mk-a 'x 'x))) ; fixpoint combinator 
+				 (mk-l (mk-v 'x) (mk-a 'h (mk-a 'x 'x))))))
       ('t  (mk-l (mk-v 'f)(mk-l (mk-v 'x)(mk-a 'x 'f))))
            ; Rosser's J combinator
       (j   (mk-l (mk-v 'x)(mk-l (mk-v 'y)(mk-l (mk-v 'z)(mk-l (mk-v 'w)
