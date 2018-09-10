@@ -33,6 +33,10 @@ It is particularly useful when you combine functions with many arguments:
 <code>(noe '((#&s (lam x (lam y (lam z #$(p x y z))))) (lam y (q y)))) ==>
 (LAM X (LAM Z (((P X) (Q X)) Z)))</code>
 
+For example, mortals wouldn't want to binarize the following manually:
+
+<code>(noe '#$((#&s #&s (#&k (#&k #&k))) (#&k #&k) #&k))</code>
+
 There are examples of Church encodings in the repo to show more complex cases.
 
 For example, Church encoding of <code>or, true, false</code> are:
@@ -46,6 +50,8 @@ For example, Church encoding of <code>or, true, false</code> are:
 so that <code>(or true false) ==> (lam x (lam y (lam x x)))</code>, which is <code>K K</code>=true.
 
 and <code>(or false false) ==> (lam x (lam y x))</code>, which is <code>K</code>=false.
+
+Have a look at the examples in the repo for this. Last use of <code>noe</code> above just did this one.
 
 Left-associativity is taken care of on the fly. All of the examples below are same lambda terms:
 
