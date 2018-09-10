@@ -288,3 +288,6 @@
 
 (set-dispatch-macro-character #\# #\$ #'|#$-reader|)
 
+(defun comb-eval (&rest argl)
+  (noe (left-assoc argl)))
+
