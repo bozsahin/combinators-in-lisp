@@ -37,7 +37,7 @@ For example, mortals wouldn't want to binarize the following manually:
 
 <code>(noe '#$((#&s #&s (#&k (#&k #&k))) (#&k #&k) #&k))</code>
 
-There are examples of Church encodings in the repo to show more complex cases.
+There are such examples of Church encodings in the repo.
 
 For example, Church encoding of <code>or, true, false</code> are:
 
