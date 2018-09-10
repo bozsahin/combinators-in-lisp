@@ -51,7 +51,16 @@ so that <code>(or true false) ==> (lam x (lam y (lam x x)))</code>, which is <co
 
 and <code>(or false false) ==> (lam x (lam y x))</code>, which is <code>K</code>=false.
 
-Have a look at the examples in the repo for this. Last use of <code>noe</code> above just did this one.
+Have a look at the examples in the repo for this. Last use of <code>noe</code> above just did the equivalent of
+<code>(or true false)</code>.
+
+You can check for equivalences too. For example <code>O=C B^2 B</code>, and you can check this by comparing:
+
+<code>(noe '#$(#&o 1 2 3))</code>
+
+and 
+
+<code>(noe '#$(#&c #&b2 #&b 1 2 3))</code>.
 
 Left-associativity is taken care of on the fly. All of the examples below are same lambda terms:
 
