@@ -53,6 +53,14 @@ and <code>(or false false) ==> (lam x (lam y x))</code>, which is <code>K</code>
 
 Have a look at the examples in the repo for this. Last use of <code>noe</code> above just did this one.
 
+You can check for equivalences too. For example <code>O=C B^2 B</code>, and you can check this by comparing:
+
+<code>(noe '#$(#&o 1 2 3))</code>
+
+and 
+
+<code>(noe '#$(#&c #&b2 #&b 1 2 3))</code>.
+
 Left-associativity is taken care of on the fly. All of the examples below are same lambda terms:
 
 <code> ((lam x x) a)</code>
