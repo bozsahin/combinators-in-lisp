@@ -16,8 +16,7 @@ More accurately, they will be <b>Curried/Schonfinkeled</b> lambda terms (hence n
 
 Once we have that, combinators are just CL macros sitting on top of LAMs (not lambdas)
 
-<b>For combinator names, just prefix the Curry & Feys name with comma in a backquoted list. S is ss and T is tt because of
-  name clash with Lisp.</b>
+<b>For combinator names, just prefix the Curry & Feys name with comma in a backquoted Lisp object. S is ss and T is tt because of name clash with Lisp.</b>
 
 <b>Applicative lambda terms must be binary in the ADT. If you're tired of writing <code>(a b c)</code> as <code>((a b) c)</code>, you can use the reader macro #$(..) which binarizes them recursively for you. </b> 
 
@@ -56,7 +55,7 @@ so that <code>(or true false) ==> (lam y (lam x (lam y1 x)))</code>, which is <c
 
 and <code>(or false false) ==> (lam x (lam y x))</code>, which is <code>K</code>=false.
 
-Have a look at the examples in the repo for this. Last use of <code>noe</code> above just did the equivalent of
+Have a look at the examples in the repo for this. Last use of <code>noe</code> above does the equivalent of
 <code>(or true false)</code>.
 
 You can check for equivalences too. For example <code>O=C B^2 B</code>, and you can check this by comparing:
