@@ -24,7 +24,7 @@
 ;;;;
 ;;;; this is a direct import of Alessandro Cimatti's ADT for Lambda-calculus. 
 ;;;; Thanks for putting it on the web.
-;;;; (minor addition for our purposes: singleton e can be symbol OR constant)
+;;;; (minor addition for our purposes: singleton e can be symbol OR constant; unary lambda terms can be arbitrarily nested)
 
 ;;;; The ADT for expressions
 ;;;; e ::= v | l | a
@@ -221,49 +221,36 @@
   (if (listp obj) obj (list obj)))
 
 
-;; reader macro for combinators. Note that
-;; it cannot be a defmacro because they can appear
-;; anywhere, not just in functor position.
+;; combinators' lambda definitions for backquote substitution
 
-(defun |#&-reader| (s c1 c2)
-  "NB. results of readers are program expressions, i.e. they are eval'd"
-  (declare (ignore c1 c2))
-  (let ((comb (read s t nil t)))
-    (case comb  ; names are from Curry & Feys unless noted otherwise
-                ; these are simply lambda equivalent terms for combinators
-		; don't be  alarmed by constants as var names; alpha conversion
-		; takes care of it.
-      (i   (mk-l (mk-v 'x) (mk-e 'x)))
-      (a   (mk-l (mk-v 'f)(mk-l (mk-v 'a) (mk-a 'f 'a))))
-      (b   (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x)(mk-a 'f (mk-a 'g 'x))))))
-      (b2  (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x) (mk-l (mk-v 'y)
-		(mk-a 'f (mk-a (mk-a 'g 'x) 'y)))))))
-      (b3  (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x) (mk-l (mk-v 'y)(mk-l (mk-v 'z)
-		(mk-a 'f (mk-a (mk-a (mk-a 'g 'x) 'y)'z))))))))
-      (s  (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'x)
-		(mk-a (mk-a 'f 'x) (mk-a 'g 'x))))))
+(defconstant      i   (mk-l (mk-v 'x) (mk-e 'x)))
+(defconstant      a   (mk-l (mk-v 'f)(mk-l (mk-v 'a) (mk-a 'f 'a))))
+(defconstant      b   (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x)(mk-a 'f (mk-a 'g 'x))))))
+(defconstant      b2  (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x) (mk-l (mk-v 'y)
+									      (mk-a 'f (mk-a (mk-a 'g 'x) 'y)))))))
+(defconstant      b3  (mk-l (mk-v 'f) (mk-l (mk-v 'g ) (mk-l (mk-v 'x) (mk-l (mk-v 'y)(mk-l (mk-v 'z)
+											     (mk-a 'f (mk-a (mk-a (mk-a 'g 'x) 'y)'z))))))))
+(defconstant      ss  (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'x)  ;; s cant be redefined ss=S
+							   (mk-a (mk-a 'f 'x) (mk-a 'g 'x))))))
          ; S^2 combinator. This is actually Turner's S'' not Curry's S^2. See Bozsahin 2012
-      (s2  (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'x)(mk-l (mk-v 'y)
-		(mk-a (mk-a 'f 'x) (mk-a (mk-a 'g 'x)'y)))))))
+(defconstant      s2  (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'x)(mk-l (mk-v 'y)
+									  (mk-a (mk-a 'f 'x) (mk-a (mk-a 'g 'x)'y)))))))
          ; O combinator, also called D by Hoyt & Baldridge 2008. See Bozsahin 2012 book for discussion.
-      (o   (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'h)
+(defconstant      o   (mk-l (mk-v 'f)(mk-l (mk-v 'g) (mk-l (mk-v 'h)
 	        (mk-a 'f (mk-l (mk-v 'x)(mk-a 'g (mk-a 'h 'x))))))))
-      (k   (mk-l (mk-v 'x)(mk-l (mk-v 'y) (mk-e 'x))))
-      (c   (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'g)))))
-      (w   (mk-l (mk-v 'f)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'x))))
-      (phi (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'h)(mk-l (mk-v 'x)
-	        (mk-a (mk-a 'f (mk-a 'g 'x)) (mk-a 'h 'x)))))))
-      (psi (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'z)(mk-l (mk-v 'w)
-                (mk-a (mk-a 'f (mk-a 'g 'z))(mk-a 'g 'w)))))))
-      (y   (mk-l (mk-v 'h) (mk-a (mk-l (mk-v 'x) (mk-a 'h (mk-a 'x 'x))) ; fixpoint combinator 
-				 (mk-l (mk-v 'x) (mk-a 'h (mk-a 'x 'x))))))
-      ('t  (mk-l (mk-v 'f)(mk-l (mk-v 'x)(mk-a 'x 'f))))
+(defconstant      k   (mk-l (mk-v 'x)(mk-l (mk-v 'y) (mk-e 'x))))
+(defconstant      c   (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'g)))))
+(defconstant      w   (mk-l (mk-v 'f)(mk-l (mk-v 'x)(mk-a (mk-a 'f 'x) 'x))))
+(defconstant      phi (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'h)(mk-l (mk-v 'x)
+									  (mk-a (mk-a 'f (mk-a 'g 'x)) (mk-a 'h 'x)))))))
+(defconstant      psi (mk-l (mk-v 'f)(mk-l (mk-v 'g)(mk-l (mk-v 'z)(mk-l (mk-v 'w)
+									  (mk-a (mk-a 'f (mk-a 'g 'z))(mk-a 'g 'w)))))))
+(defconstant      y   (mk-l (mk-v 'h) (mk-a (mk-l (mk-v 'x) (mk-a 'h (mk-a 'x 'x))) ; fixpoint combinator 
+					     (mk-l (mk-v 'x) (mk-a 'h (mk-a 'x 'x))))))
+(defconstant      tt  (mk-l (mk-v 'f)(mk-l (mk-v 'x)(mk-a 'x 'f))))  ; t cant be redefined; use tt for T
            ; Rosser's J combinator
-      (j   (mk-l (mk-v 'x)(mk-l (mk-v 'y)(mk-l (mk-v 'z)(mk-l (mk-v 'w)
-	       (mk-a (mk-a 'x 'y)(mk-a (mk-a 'x 'w) 'z)))))))
-      (otherwise '(unknown combinator)))))
-
-(set-dispatch-macro-character #\# #\& #'|#&-reader|)
+(defconstant      j   (mk-l (mk-v 'x)(mk-l (mk-v 'y)(mk-l (mk-v 'z)(mk-l (mk-v 'w)
+									  (mk-a (mk-a 'x 'y)(mk-a (mk-a 'x 'w) 'z)))))))
 
 (defun my-cons (l1 l2)
   (if (null l1) l2 (cons l1 l2)))
