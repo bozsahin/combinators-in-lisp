@@ -292,4 +292,3 @@
 
 (defun comb-eval (&rest argl)
   (noe (left-assoc argl)))
-
