@@ -16,28 +16,29 @@ More accurately, they will be <b>Curried/Schonfinkeled</b> lambda terms (hence n
 
 Once we have that, combinators are just CL macros sitting on top of LAMs (not lambdas)
 
-<b>For combinator names, just prefix the Curry & Feys name with '#&'.</b>
+<b>For combinator names, just prefix the Curry & Feys name with comma in a backquoted list (S is ss and T is tt because of
+  name clash with Lisp.</b>
 
 <b>Applicative lambda terms must be binary in the ADT. If you're tired of writing <code>(a b c)</code> as <code>((a b) c)</code>, you can use the reader macro #$(..) which binarizes them recursively for you. </b> Instead of 
 
-<code>(noe '((#&s (lam x (lam y ((p x) y)))) (lam y (q y)))) ==>
+<code>(noe `((,ss (lam x (lam y ((p x) y)))) (lam y (q y)))) ==>
 (LAM X ((P X) (Q X)))</code>
 
 You can write 
 
-<code>(noe '((#&s (lam x (lam y #$(p x y)))) (lam y (q y)))) ==>
+<code>(noe `((,ss (lam x (lam y #$(p x y)))) (lam y (q y)))) ==>
 (LAM X ((P X) (Q X)))</code>
 
 <code>noe</code> is the normal order evaluator. 
 
 It is particularly useful when you combine functions with many arguments:
 
-<code>(noe '((#&s (lam x (lam y (lam z #$(p x y z))))) (lam y (q y)))) ==>
+<code>(noe `((,ss (lam x (lam y (lam z #$(p x y z))))) (lam y (q y)))) ==>
 (LAM X (LAM Z (((P X) (Q X)) Z)))</code>
 
 For example, mortals wouldn't want to binarize the following manually:
 
-<code>(noe '#$((#&s #&s (#&k (#&k #&k))) (#&k #&k) #&k))</code>
+<code>(noe `#$((,ss ,ss (,k (,k ,k))) (,k ,k) ,k))</code>
 
 There are such examples of Church encodings in the repo.
 
@@ -49,7 +50,7 @@ For example, Church encoding of <code>or, true, false</code> are:
   
 <code>false = K</code>
  
-so that <code>(or true false) ==> (lam x (lam y (lam x x)))</code>, which is <code>K K</code>=true.
+so that <code>(or true false) ==> (lam y (lam x (lam y1 x)))</code>, which is <code>K K</code>=true.
 
 and <code>(or false false) ==> (lam x (lam y x))</code>, which is <code>K</code>=false.
 
@@ -58,11 +59,11 @@ Have a look at the examples in the repo for this. Last use of <code>noe</code> a
 
 You can check for equivalences too. For example <code>O=C B^2 B</code>, and you can check this by comparing:
 
-<code>(noe '#$(#&o 1 2 3))</code>
+<code>(noe `#$(,o 1 2 3))</code>
 
 and 
 
-<code>(noe '#$(#&c #&b2 #&b 1 2 3))</code>.
+<code>(noe `#$(,c ,b2 ,b 1 2 3))</code>.
 
 Left-associativity is taken care of on the fly. All of the examples below are same lambda terms:
 
