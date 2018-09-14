@@ -7,6 +7,8 @@
 ;; -cem bozsahin
 
 ;; backquoted ones do the equivalent of text substitution
+;; (since there is no such thing in Lisp, they actually
+;; substitute church-code as code list)
 
 (defconstant  ch-0 '(lam f (lam x x)))
 (defconstant  ch-1 '(lam f (lam x (f x))))
